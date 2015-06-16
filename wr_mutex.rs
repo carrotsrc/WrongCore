@@ -70,7 +70,7 @@ extern "C" {
 
 
 #[no_mangle]
-pub fn wrong_test_mutex() {
+pub fn wrcore_test_mutex() {
 
 	// Have to settle for dynamic allocation
 	let mutex: *const Mutex = unsafe{ il_mutex_allocate() };
@@ -83,20 +83,19 @@ pub fn wrong_test_mutex() {
 	}	
 
 	let rcode: i32 = unsafe { il_mutex_is_locked(mutex) };
-	if rcode == 1 {
-		 unsafe { printk("Mutex: Locked\n\0"); }
-	} else {
-		 unsafe { printk("Mutex: Unlocked\n\0"); }
-	}
+	match rcode {
+		1 => unsafe { printk("Mutex: Locked\n\0"); },
+		_ => unsafe { printk("Mutex: Unlocked\n\0"); }
+	};
+
 
 	unsafe{ mutex_unlock(mutex) };
 
 	unsafe { printk("WrongCore:2 - \n\0") };
 	let scode = unsafe { il_mutex_is_locked(mutex) };
-	if scode == 1 {
-		 unsafe { printk("Mutex: Locked\n\0"); }
-	} else {
-		 unsafe { printk("Mutex: Unlocked\n\0"); }
-	}
+	match scode {
+		1 => unsafe { printk("Mutex: Locked\n\0"); },
+		_ => unsafe { printk("Mutex: Unlocked\n\0"); }
+	};
 
 }
