@@ -3,9 +3,17 @@
 
 This is a hobby module for hacking rust code into the Linux kernel, in a vaguely practical though ineffecient way. A truely heinous act.
 
-**Why?**
+* Dynamic mutex allocation and locking/unlocking performed on kernal init routine (Can't do compile-time mutex definition because it's all done through macro wizardry)
+
+#### Todo 
+
+* Work out how to split traits off
+
+#### Why?
 
 Because!
+
+
 
 ### License
 

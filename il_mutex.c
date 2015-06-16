@@ -1,9 +1,12 @@
 #include <linux/mutex.h>
+#include <linux/slab.h>
 
-extern struct mutex il_create_mutex(void) {
-	DEFINE_MUTEX(TmpMutex);
+extern void il_mutex_init(struct mutex *mutex) {
+	mutex_init(mutex);
+}
 
-	return TmpMutex;
+extern struct mutex* il_mutex_allocate(void) {
+	return (struct mutex*) kmalloc(sizeof(struct mutex), GFP_KERNEL);
 }
 
 /* This is inline usually, so we need to implement a
