@@ -10,6 +10,8 @@ This is a hobby module for hacking rust code into the Linux kernel, in a vaguely
 
 After messing around, there is a horrible hack for making the crate work without complaints- build the crate twice: as rlib and obj file; compile against the lib but link against the obj in the final kbuild. Needs more research, there is undoubtedly a better way to achieve this.
 
+
+
 #### Why?
 
 Just, because.
