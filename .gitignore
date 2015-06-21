@@ -1,3 +1,4 @@
 *.o*
 modules.builtin
 modules.order
+libwrcore.rlib
