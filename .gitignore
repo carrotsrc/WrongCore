@@ -2,4 +2,4 @@
 modules.builtin
 modules.order
 libwrcore.rlib
-*_dump
+*_dump*
