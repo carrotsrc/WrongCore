@@ -6,7 +6,14 @@ extern void il_mutex_init(struct mutex *mutex) {
 }
 
 extern struct mutex* il_mutex_allocate(void) {
-	return (struct mutex*) kmalloc(sizeof(struct mutex), GFP_KERNEL);
+	struct mutex* m = (struct mutex*) kmalloc(sizeof(struct mutex), GFP_KERNEL);
+	if(m == NULL) {
+		printk("IF Failed to allocate mutex\n");
+	} else {
+		printk("IF Allocated Mutex\n");
+	}
+
+	return m;
 }
 
 /* This is inline usually, so we need to implement a
