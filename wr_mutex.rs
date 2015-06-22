@@ -22,8 +22,8 @@ extern "C" {
 pub fn wrcore_test_mutex() {
 
 	// Have to settle for dynamic allocation
-	wrcore::kernel::print("WrongCore: Init OK\n\0");
-	let mutex: *const Mutex = unsafe{ il_mutex_allocate() };
+	//wrcore::kernel::print("WrongCore: Init OK\n\0");
+	let mutex = unsafe{ il_mutex_allocate() };
 	wrcore::kernel::print("WrongCore: Allocated mutex\n\0");
 
 

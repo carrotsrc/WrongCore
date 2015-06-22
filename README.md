@@ -15,7 +15,8 @@ Fixed the rlib problem by shoving wrcore into its own directory which avoids hav
 
 Add no-stack-check on the flag, which removed the split stack prologues.
 
-Found the actual `mutex_init` API call is causing the kernel to panic; when replaced with printk, there is no panic. Time to find out why...?d
+When there is no `wrcore::kernel::print()` in the mutex test, the pointer passed to `il_mutex_init()` is the same address. If there is a print(), the pointer address that is passed to `il_mutex_init()` is consistantly 0x1a and so the kernel blows up. Something about the print trashes the value assigned to the mutex pointer.
+
 
 **21/06**
 
