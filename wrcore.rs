@@ -54,3 +54,4 @@ macro_rules! partial_eq_impl {
 partial_eq_impl! { i32 }
 eq_impl! { i32}
 
+type w_void = u8;
