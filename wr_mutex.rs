@@ -22,20 +22,19 @@ extern "C" {
 pub fn wrcore_test_mutex() {
 
 	// Have to settle for dynamic allocation
-	//wrcore::kernel::print("WrongCore: Init OK\n\0");
+	wrcore::kernel::print("WrongCore: Init OK\n\0");
 	let mutex: *const Mutex = unsafe{ il_mutex_allocate() };
-	
+	wrcore::kernel::print("WrongCore: Allocated mutex\n\0");
 
 
 	// runtime init
 	unsafe { il_mutex_init(mutex); }
 
-	wrcore::kernel::print("WrongCore: init and ready\n\0");
-/*
-	wrcore::kernel::print("WrongCore: Initialised Mutex\n\0");
+//	wrcore::kernel::print("WrongCore: init and ready\n\0");
 
-		mutex_lock(mutex);
-	}	
+//	wrcore::kernel::print("WrongCore: Initialised Mutex\n\0");
+/*
+	unsafe{ mutex_lock(mutex); }	
 	wrcore::kernel::print("WrongCore:1 - \n\0");
 	let rcode: i32 = unsafe { il_mutex_is_locked(mutex) };
 	match rcode {

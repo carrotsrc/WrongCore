@@ -2,18 +2,14 @@
 #include <linux/slab.h>
 
 extern void il_mutex_init(struct mutex *mutex) {
-	mutex_init(mutex);
+	printk("Called successfully");
+	return;
+//	mutex_init(mutex);
 }
 
 extern struct mutex* il_mutex_allocate(void) {
-	struct mutex* m = (struct mutex*) kmalloc(sizeof(struct mutex), GFP_KERNEL);
-	if(m == NULL) {
-		printk("IF Failed to allocate mutex\n");
-	} else {
-		printk("IF Allocated Mutex\n");
-	}
+	return (struct mutex*) kmalloc(sizeof(struct mutex), GFP_KERNEL);
 
-	return m;
 }
 
 /* This is inline usually, so we need to implement a

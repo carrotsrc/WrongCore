@@ -1,13 +1,12 @@
 $(obj)/integration.o: $(src)/integration.s
 	$(AS) --32 $(src)/integration.s -o $(obj)/integration.o
 
-# Need to build wrcore twice, once as a lib so rustc doesn't complain
-# on other compiles, and once as a obj to link in to the final build
+
 $(obj)/wrcore.o: $(src)/wrongcore/wrcore.rs
-	rustc --emit=obj --target=i686-unknown-linux-gnu $(src)/wrongcore/wrcore.rs -o $(obj)/wrcore.o
+	rustc -C no-stack-check --emit=obj --target=i686-unknown-linux-gnu $(src)/wrongcore/wrcore.rs -o $(obj)/wrcore.o
 
 $(obj)/wr_mutex.o: $(obj)/wrcore.o $(src)/wr_mutex.rs
-	rustc --target=i686-unknown-linux-gnu --emit obj -L . $(src)/wr_mutex.rs -o $(obj)/wr_mutex.o
+	rustc -C no-stack-check --target=i686-unknown-linux-gnu --emit obj -L . $(src)/wr_mutex.rs -o $(obj)/wr_mutex.o
 
 
 

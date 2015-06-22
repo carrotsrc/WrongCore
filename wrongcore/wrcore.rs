@@ -19,6 +19,7 @@ pub trait Sync {}
  * The following macros were lifted from
  * Rust-lang, released under MIT
  */
+
 #[lang = "eq"]
 pub trait PartialEq<Rhs: ?Sized = Self> {
 	/// This method tests for `self` and `other` values to be equal, and is used by `==`.

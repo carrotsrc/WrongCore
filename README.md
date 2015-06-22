@@ -5,7 +5,7 @@ This is a hobby module for hacking rust code into the Linux kernel, in a vaguely
 
 * `Dodgy:` Dynamic mutex allocation and locking/unlocking test performed on kernal init routine (Can't do compile-time mutex definition because it's all done through macro wizardry)
 * WrongCore now functions as a rust module, and links correctly in the final kbuild
-* Kernel blowing up due to not properly doing anything with __morestack
+* Kernel blowing up in a panic
 
 #### Log
 
@@ -13,7 +13,9 @@ This is a hobby module for hacking rust code into the Linux kernel, in a vaguely
 
 Fixed the rlib problem by shoving wrcore into its own directory which avoids having to compile it twice! Wrongcore now works with namespaces and links correctly so to print to the kernel log you can use `wrcore::kernel::print()`.
 
-Now been stung by not properly looking at how `__morestack` works. Any kernel API call from rust code is trashed after a call to a function with a prologue.
+Add no-stack-check on the flag, which removed the split stack prologues.
+
+Found the actual `mutex_init` API call is causing the kernel to panic; when replaced with printk, there is no panic. Time to find out why...?d
 
 **21/06**
 
