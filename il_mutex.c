@@ -2,13 +2,11 @@
 #include <linux/slab.h>
 
 extern void il_mutex_init(struct mutex *mutex) {
-	printk("Called successfully: %x\n", (int)mutex);
-	//mutex_init(mutex);
+	mutex_init(mutex);
 }
 
 extern struct mutex* il_mutex_allocate(void) {
 	struct mutex* mutex = (struct mutex*) kmalloc(sizeof(struct mutex), GFP_KERNEL);
-	printk("Called successfully: %x\n", (int)mutex);
 	return mutex;
 }
 
