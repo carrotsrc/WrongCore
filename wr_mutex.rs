@@ -4,6 +4,8 @@
 #![feature(lang_items)]
 extern crate wrcore;
 
+use wrcore::types::wr_char;
+
 #[repr(C)]
 struct Mutex;
 
@@ -22,35 +24,43 @@ extern "C" {
 pub fn wrcore_test_mutex() {
 
 	// Have to settle for dynamic allocation
-	//wrcore::kernel::print("WrongCore: Init OK\n\0");
-	let mutex = unsafe{ il_mutex_allocate() };
-	wrcore::kernel::print("WrongCore: Allocated mutex\n\0");
+	let mut out: &[wr_char] = b"WrongCore\n\0";
 
+	wrcore::kernel::print(out);
+	let mutex = unsafe{ il_mutex_allocate() };
+	
+	out = b"WrongCore: Allocated OK\n\0";
+	wrcore::kernel::print(out);
 
 	// runtime init
 	unsafe { il_mutex_init(mutex); }
+	out = b"WrongCore: Init OK\n\0";
+	wrcore::kernel::print(out);
 
-//	wrcore::kernel::print("WrongCore: init and ready\n\0");
 
-//	wrcore::kernel::print("WrongCore: Initialised Mutex\n\0");
-/*
-	unsafe{ mutex_lock(mutex); }	
-	wrcore::kernel::print("WrongCore:1 - \n\0");
-	let rcode: i32 = unsafe { il_mutex_is_locked(mutex) };
-	match rcode {
-		1 => wrcore::kernel::print("Mutex: Locked\n\0"),
-		_ => wrcore::kernel::print("Mutex: Unlocked\n\0")
+	
+	let mut lchk = unsafe{ il_mutex_is_locked(mutex) };
+	let out = match lchk {
+		1 => b"WrongCore: Mutex Locked\n\0",
+		_ => b"WrongCore: Mutex Unlock\n\0"
 	};
+	wrcore::kernel::print(out);
 
-
-	unsafe{ mutex_unlock(mutex) };
-
-	wrcore::kernel::print("WrongCore:2 - \n\0");
-	let scode = unsafe { il_mutex_is_locked(mutex) };
-	match scode {
-		1 => wrcore::kernel::print("Mutex: Locked\n\0"),
-		_ => wrcore::kernel::print("Mutex: Unlocked\n\0")
+	unsafe { mutex_lock(mutex); }
+	lchk = unsafe{ il_mutex_is_locked(mutex) };
+	let out = match lchk {
+		1 => b"WrongCore: Mutex Locked\n\0",
+		_ => b"WrongCore: Mutex Unlock\n\0"
 	};
-*/
+	wrcore::kernel::print(out);
+
+
+	unsafe { mutex_unlock(mutex); }
+	lchk = unsafe{ il_mutex_is_locked(mutex) };
+	let out = match lchk {
+		1 => b"WrongCore: Mutex Locked\n\0",
+		_ => b"WrongCore: Mutex Unlock\n\0"
+	};
+	wrcore::kernel::print(out);
 
 }
