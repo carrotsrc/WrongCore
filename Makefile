@@ -2,7 +2,7 @@ $(obj)/integration.o: $(src)/integration.s
 	$(AS) --32 $(src)/integration.s -o $(obj)/integration.o
 
 
-$(obj)/wrcore.o: $(src)/wrongcore/wrcore.rs $(src)/wrongcore/kernel.rs
+$(obj)/wrcore.o: $(src)/wrongcore/wrcore.rs $(src)/wrongcore/kernel.rs $(src)/wrongcore/lang/ops.rs
 	rustc --target=i686-unknown-linux-gnu $(src)/wrongcore/wrcore.rs
 	rustc -C no-stack-check -C relocation-model=static --emit=obj --target=i686-unknown-linux-gnu $(src)/wrongcore/wrcore.rs -o $(obj)/wrcore.o
 

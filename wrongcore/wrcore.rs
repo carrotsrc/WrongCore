@@ -7,17 +7,21 @@
 #[lang="sized"]
 pub trait Sized {}
 
-
 #[lang="copy"]
 pub trait Copy {}
 
 #[lang="sync"]
 pub trait Sync {}
 
+#[lang = "panic"]
+pub fn panic(expr_file_line: &(&'static str, &'static str, u32)) { }
+
 #[lang = "panic_bounds_check"]
 pub fn panic_bounds_check(file_line: &(&'static str, u32),
                      index: usize, len: usize) { }
 
+
+pub mod lang;
 /* Quick note:
  *
  * Used the rust-lang as a basis for some of this
