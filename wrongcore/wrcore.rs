@@ -142,11 +142,11 @@ macro_rules! partial_ord_impl {
 	)*)
 }
 
-partial_eq_impl! {i32}
+partial_eq_impl! {u8 u32 i32}
 
-eq_impl! {i32}
+eq_impl! {u8 u32 i32}
 
-partial_ord_impl! {i32}
+partial_ord_impl! {u8 u32 i32}
 
 /* ---- */
 
