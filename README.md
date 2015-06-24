@@ -3,17 +3,27 @@
 
 This is a hobby module for hacking rust code into the Linux kernel, in a vaguely practical though ineffecient way. A truely heinous act.
 
-* `Dodgy:` Dynamic mutex allocation and locking/unlocking test performed on kernal init routine (Can't do compile-time mutex definition because it's all done through macro wizardry)
+* Dynamic mutex allocation and locking/unlocking test performed on kernal init routine (Can't do compile-time mutex definition because it's all done through macro wizardry)
 * WrongCore now functions as a rust module, and links correctly in the final kbuild
-* Kernel blowing up in a panic
+
 
 #### Log
+
+**26/06**
+
+The kernel has had jitters on every other build because the relocation type has been based on dynamic loading. After looking at the disasm, everything was based on global offset table; changing the relocation-model to static has resolved this problem.
+
+Interestingly the kernel print method was trashing the pointer to the mutex, it seemed to be overwriting the eax register with the return value from printk and then putting that value into the stack position to be read by the `il_mutex_init`. It was also causing some other strange behaviour, which I was calling stack-ladder, where the eax value would move down the stack from location, back to eax, to location, back to eax and so on.
+
+In the end, temoving the return value has aligned everything again and it is back to functional.
+
+rlib does need to be compiled, got caught out by the kernel::print signature being completely different to the one that was compiled into the object code. It was as if it was cached somewhere and the cache wasn't getting updated. The problem, as far as I can tell, was the rlib that was used as reference wasn't getting updated. Back to being a bit of a hack solution.
 
 **22/06**
 
 Fixed the rlib problem by shoving wrcore into its own directory which avoids having to compile it twice! Wrongcore now works with namespaces and links correctly so to print to the kernel log you can use `wrcore::kernel::print()`.
 
-Add no-stack-check on the flag, which removed the split stack prologues.
+Add no-stack-check on the flag, which removed the split stack prologues and also negates the requirement of using a __morestack routine.
 
 When there is no `wrcore::kernel::print()` in the mutex test, the pointer passed to `il_mutex_init()` is the same address. If there is a print(), the pointer address that is passed to `il_mutex_init()` is consistantly 0x1a and so the kernel blows up. Something about the print trashes the value assigned to the mutex pointer.
 
