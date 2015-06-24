@@ -23,6 +23,12 @@ Removed about 3000+ kernel modules from the stock kernel, so it actually compile
 
 Having got a little more comfortable with language items, foregone reimplementing bits and just pulled in rust-lang's `ops.rs` file. Shoving lang items into wrcore/lang/
 
+Tried ripping `cpu_detect` out of the kernel source tree and dropping in a rust replacement of the function to see if it works.
+
+Kernel went instagib (as expect).
+
+There is inline assembly that is wrapped in an interface layer function -- that is probably screwing up but have to look at the source. Leaving fix until tomorrow.
+
 **22/06**
 
 Fixed the rlib problem by shoving wrcore into its own directory which avoids having to compile it twice! Wrongcore now works with namespaces and links correctly so to print to the kernel log you can use `wrcore::kernel::print()`.
