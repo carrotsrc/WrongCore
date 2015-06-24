@@ -4,9 +4,9 @@
 #![no_std]
 #![feature(lang_items)]
 
-
 #[lang="sized"]
 pub trait Sized {}
+
 
 #[lang="copy"]
 pub trait Copy {}
@@ -51,12 +51,16 @@ macro_rules! partial_eq_impl {
 	impl Eq for $t {}
 	)*)
 }
-partial_eq_impl! { i32 }
-eq_impl! { i32}
+partial_eq_impl! {i32}
+eq_impl! {i32}
 
 /* ---- */
 
+pub mod types {
+	pub type wr_char = u8;
+}
+
 /* WrongCore kernel modules */
 pub mod kernel;
-pub mod fs;
+//pub mod fs;
 
