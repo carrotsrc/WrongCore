@@ -6,14 +6,12 @@ extern crate wrcore;
 
 use wrcore::types::wr_char;
 
-#[repr(C)]
-struct Mutex;
-
 extern "C" {
 	fn il_cpuid(id: u32, a: &mut u32, b: &mut u32, c: &mut u32, d: &mut u32);
 }
 
 
+#[repr(C)]
 pub struct CpuInfoX86 {
 	x86: 			u8,
 	x86_vendor: 		u8,
@@ -58,7 +56,7 @@ pub struct CpuInfoX86 {
 }
 
 #[no_mangle]
-pub fn cpu_detectl(c: &mut CpuInfoX86) {
+pub fn cpu_detect(c: &mut CpuInfoX86) {
 	unsafe{ 
 		il_cpuid(0x00000000, 
 		&mut (c.cpuid_level 	 as u32),
@@ -70,7 +68,31 @@ pub fn cpu_detectl(c: &mut CpuInfoX86) {
 	c.x86 = 4;
 
 	if c.cpuid_level >= 0x00000001 {
-		let junk: u32; let tfms: u32; let cap0: u32; let misc: u32;
-	}
+		let mut junk: u32 = 0;
+        let mut tfms: u32 = 0;
+        let mut cap0: u32 = 0;
+        let mut misc: u32 = 0;
+
+        unsafe{ il_cpuid(0x00000001, &mut tfms, &mut misc, &mut junk, &mut cap0); }
+
+        c.x86 = ((tfms >> 8) & 0xf) as u8;
+        c.x86_model = ((tfms >> 4) & 0xf) as u8;
+        c.x86_mask = (tfms & 0xf) as u8;
+
+        if c.x86 == 0xf {
+            c.x86 += ((tfms >> 20) & 0xff) as u8;
+        }
+        
+        if c.x86 >= 0x6 {
+            c.x86_model += (((tfms >> 16) & 0xf) << 4) as u8;
+        }
+
+        if (cap0 & (1<<19)) == 1 {
+            c.x86_clflush_size = (((misc >> 8) & 0xff)<<3 as i32) as u16;
+            c.x86_cache_alignment = c.x86_clflush_size as i32;
+        }
+
+    }
+
 }
 
