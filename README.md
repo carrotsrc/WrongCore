@@ -19,6 +19,10 @@ In the end, removing the return value has aligned everything again and it is bac
 
 rlib does actually need to be compiled - got caught out by the `kernel::print()` signature being completely different to the one that was being compiled into the object code for linking. It was as if it was cached somewhere and the cache wasn't getting updated. The problem, as far as I can tell, was the rlib that was used as reference wasn't getting updated. Back to being a bit of a hack solution. 
 
+Removed about 3000+ kernel modules from the stock kernel, so it actually compiles fast even if recompilation ripples deep into the source tree. Irrelevent to the code at hand though.
+
+Having got a little more comfortable with language items, foregone reimplementing bits and just pulled in rust-lang's `ops.rs` file. Shoving lang items into wrcore/lang/
+
 **22/06**
 
 Fixed the rlib problem by shoving wrcore into its own directory which avoids having to compile it twice! Wrongcore now works with namespaces and links correctly so to print to the kernel log you can use `wrcore::kernel::print()`.
@@ -42,4 +46,6 @@ Just, because.
 
 ### License
 
-GPLv2
+GPLv2 once it's linked into the kernel
+
+There is some code pulled from the rust-lang repos which is originally distributed under the terms of either Apache2 or MIT. This code is clearly marked.
