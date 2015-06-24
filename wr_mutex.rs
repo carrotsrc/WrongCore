@@ -36,8 +36,6 @@ pub fn wrcore_test_mutex() {
 	unsafe { il_mutex_init(mutex); }
 	out = b"WrongCore: Init OK\n\0";
 	wrcore::kernel::print(out);
-
-
 	
 	let mut lchk = unsafe{ il_mutex_is_locked(mutex) };
 	let out = match lchk {
