@@ -9,15 +9,15 @@ This is a hobby module for hacking rust code into the Linux kernel, in a vaguely
 
 #### Log
 
-**26/06**
+**24/06**
 
-The kernel has had jitters on every other build because the relocation type has been based on dynamic loading. After looking at the disasm, everything was based on global offset table; changing the relocation-model to static has resolved this problem.
+The kernel has had jitters on every other build because the relocation type has been based on dynamic linking. After looking, kbuild was not lying to me -- everything was based on global offset table; changing the relocation-model to static has resolved this problem. This is done via the codegen flag
 
-Interestingly the kernel print method was trashing the pointer to the mutex, it seemed to be overwriting the eax register with the return value from printk and then putting that value into the stack position to be read by the `il_mutex_init`. It was also causing some other strange behaviour, which I was calling stack-ladder, where the eax value would move down the stack from location, back to eax, to location, back to eax and so on.
+Interestingly the kernel print method was trashing the pointer to the mutex. It seemed that the pointer value was stored in the stack but not retrieved again, then the `kernel::print()` was overwriting the eax register with the return and then putting that value into the stack position to be read by the `il_mutex_init()`. It was also causing some other strange behaviour, which I was calling stack-ladder, where the eax value would move down the stack from location, back to eax, to location, back to eax and so on.
 
-In the end, temoving the return value has aligned everything again and it is back to functional.
+In the end, removing the return value has aligned everything again and it is back to functional. Kernel panics have stopped! (... for now ...)
 
-rlib does need to be compiled, got caught out by the kernel::print signature being completely different to the one that was compiled into the object code. It was as if it was cached somewhere and the cache wasn't getting updated. The problem, as far as I can tell, was the rlib that was used as reference wasn't getting updated. Back to being a bit of a hack solution.
+rlib does actually need to be compiled - got caught out by the `kernel::print()` signature being completely different to the one that was being compiled into the object code for linking. It was as if it was cached somewhere and the cache wasn't getting updated. The problem, as far as I can tell, was the rlib that was used as reference wasn't getting updated. Back to being a bit of a hack solution. 
 
 **22/06**
 
