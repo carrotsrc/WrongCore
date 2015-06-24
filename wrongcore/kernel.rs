@@ -1,7 +1,8 @@
+use ::types::wr_char;
 extern "C" {
-	fn printk(fmt: &'static str) -> i32;
+	fn printk(fmt: &[wr_char]) -> i32;
 }
 
-pub fn print(fmt: &'static str) -> i32 {
-    unsafe{ printk(fmt) }
+pub fn print(fmt: &[wr_char]) {
+    unsafe{ printk(fmt); }
 }
