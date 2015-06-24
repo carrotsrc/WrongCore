@@ -23,11 +23,11 @@ Removed about 3000+ kernel modules from the stock kernel, so it actually compile
 
 Having got a little more comfortable with language items, foregone reimplementing bits and just pulled in rust-lang's `ops.rs` file. Shoving lang items into wrcore/lang/
 
-Tried ripping `cpu_detect` out of the kernel source tree and dropping in a rust replacement of the function to see if it works.
+Tried ripping `cpu_detect` out of the kernel source tree and dropping in a rust replacement of the function to see what happens.
 
-Kernel went instagib (as expect).
+Kernel went instagib (as expect), since it is called right near the beginning of the boot sequence.
 
-There is inline assembly that is wrapped in an interface layer function -- that is probably screwing up but have to look at the source. Leaving fix until tomorrow.
+There is an inline assembly function that is wrapped in an interface layer function -- I suspect that might be screwing it up, but have to see what is happening in original code. Leaving research and fixing until tomorrow.
 
 **22/06**
 
