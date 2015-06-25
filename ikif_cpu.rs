@@ -10,53 +10,68 @@ extern "C" {
 	fn il_cpuid(id: u32, a: &mut u32, b: &mut u32, c: &mut u32, d: &mut u32);
 }
 
+macro_rules! printer {
+    ($code: expr) => {
+        $code
+    }
+}
 
 #[repr(C)]
 pub struct CpuInfoX86 {
-	x86: 			u8,
-	x86_vendor: 		u8,
-	x86_model: 		u8,
-	x86_mask: 		u8,
-	
-	wp_works_ok: 		wr_char,
-	rfu: 			wr_char,
-	pad0:			wr_char,
-	pad1:			wr_char,
 
-	x86_virt_bits:		u8,
-	x86_phys_bits:		u8,
-	x86_coreid_bits:	u8,
+    // originally these are __u8 which is an unsigned char
+	x86: 			        u8,
+	x86_vendor: 		    u8,
+	x86_model: 		        u8,
+	x86_mask: 		        u8,
+
+	
+    // Testing rig is a 32bit vm, so CONFIG_X86_32 is defined
+    #[cfg(x86_32_kbuild)]
+	wp_works_ok: 		    wr_char,
+    #[cfg(x86_32_kbuild)]
+    rfu: 			        wr_char,
+    #[cfg(x86_32_kbuild)]
+	pad0:			        wr_char,
+    #[cfg(x86_32_kbuild)]
+	pad1:			        wr_char,
+    
+	x86_virt_bits:		    u8,
+	x86_phys_bits:		    u8,
+	x86_coreid_bits:	    u8,
 	extended_cpuid_level:	u32,
 
-	cpuid_level:		i32,
-	x86_capability:		[u32;12],
-	x86_vendor_id:		[wr_char;16],
-	x86_model_id:		[wr_char;64],
+	cpuid_level:		    i32,
+	x86_capability:		    [u32;12],
+	x86_vendor_id:		    [wr_char;16],
+	x86_model_id:		    [wr_char;64],
 	
-	x86_cache_size:		i32,
+	x86_cache_size:		    i32,
 	x86_cache_alignment:	i32,
-	x86_power:		i32,
-	loops_per_jiffy:	u32, // check this
+	x86_power:		        i32,
+	loops_per_jiffy:	    u32, // check this
 
-	x86_max_cores:		u16,
-	apicid:			u16,
-	initial_apicid:		u16,
-	x86_clflush_size:	u16,
+	x86_max_cores:		    u16,
+	apicid:			        u16,
+	initial_apicid:		    u16,
+	x86_clflush_size:	    u16,
 
-	booted_cores:		u16,
+	booted_cores:		    u16,
 
-	phys_proc_id:		u16,
+	phys_proc_id:		    u16,
 
-	cpu_core_id:		u16,
+	cpu_core_id:		    u16,
 
-	compute_unit_id:	u8,
+	compute_unit_id:	    u8,
 
-	cput_index:		u16,
-	microcode:		u32
+	cput_index:		        u16,
+	microcode:		        u32
 }
 
 #[no_mangle]
 pub fn cpu_detect(c: &mut CpuInfoX86) {
+
+    c.rfu = 0xf;
 	unsafe{ 
 		il_cpuid(0x00000000, 
 		&mut (c.cpuid_level 	 as u32),
