@@ -10,13 +10,6 @@ extern "C" {
 	fn il_cpuid(id: u32, a: &mut u32, b: &mut u32, c: &mut u32, d: &mut u32);
 }
 
-macro_rules! printer {
-    ($code: expr) => {
-        $code
-    }
-}
-
-
 // This stucture lines up with header for 32bit builds
 #[cfg(wr_cpu_detect_kbuild)]
 #[repr(C)]
@@ -81,18 +74,18 @@ pub struct CpuInfoX86 {
 #[no_mangle]
 pub fn cpu_detect(c: &mut CpuInfoX86) {
 
-	unsafe{ 
-		il_cpuid(0x00000000, 
-		&mut (c.cpuid_level      as u32),
-		&mut (c.x86_vendor_id[0] as u32),
-		&mut (c.x86_vendor_id[8] as u32),
-		&mut (c.x86_vendor_id[4] as u32));
-	}
+    unsafe{ 
+        il_cpuid(0x00000000, 
+        &mut (c.cpuid_level      as u32),
+        &mut (c.x86_vendor_id[0] as u32),
+        &mut (c.x86_vendor_id[8] as u32),
+        &mut (c.x86_vendor_id[4] as u32));
+    }
 
-	c.x86 = 4;
+    c.x86 = 4;
 
-	if c.cpuid_level >= 0x00000001 {
-		let mut junk: u32 = 0;
+    if c.cpuid_level >= 0x00000001 {
+        let mut junk: u32 = 0;
         let mut tfms: u32 = 0;
         let mut cap0: u32 = 0;
         let mut misc: u32 = 0;
