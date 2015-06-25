@@ -1,0 +1,9 @@
+menu "WrongCore"
+
+config WR_CPU_DETECT
+	bool "Drop-in cpu_detect rust code"
+	def_bool n
+	help
+	  Hack WrongCore dropin function into kernel
+
+endmenu #WrongCore
