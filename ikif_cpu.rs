@@ -16,65 +16,74 @@ macro_rules! printer {
     }
 }
 
+
+// This stucture lines up with header for 32bit builds
+#[cfg(wr_cpu_detect_kbuild)]
 #[repr(C)]
 pub struct CpuInfoX86 {
 
     // originally these are __u8 which is an unsigned char
-	x86: 			        u8,
-	x86_vendor: 		    u8,
-	x86_model: 		        u8,
-	x86_mask: 		        u8,
+    x86:                    u8,
+    x86_vendor:             u8,
+    x86_model:              u8,
+    x86_mask:               u8,
 
-	
+
     // Testing rig is a 32bit vm, so CONFIG_X86_32 is defined
+    // but just in case
     #[cfg(x86_32_kbuild)]
-	wp_works_ok: 		    wr_char,
+    wp_works_ok:            wr_char,
     #[cfg(x86_32_kbuild)]
-    rfu: 			        wr_char,
+    rfu:                    wr_char,
     #[cfg(x86_32_kbuild)]
-	pad0:			        wr_char,
+    pad0:                   wr_char,
     #[cfg(x86_32_kbuild)]
-	pad1:			        wr_char,
+    pad1:                   wr_char,
+
+    #[cfg(not(x86_32_kbuild))]
+    x86_tlbsize:            i32,            // int
     
-	x86_virt_bits:		    u8,
-	x86_phys_bits:		    u8,
-	x86_coreid_bits:	    u8,
-	extended_cpuid_level:	u32,
+    x86_virt_bits:          u8,
+    x86_phys_bits:          u8,
+    x86_coreid_bits:        u8,
+    extended_cpuid_level:   u32,
 
-	cpuid_level:		    i32,
-	x86_capability:		    [u32;12],
-	x86_vendor_id:		    [wr_char;16],
-	x86_model_id:		    [wr_char;64],
-	
-	x86_cache_size:		    i32,
-	x86_cache_alignment:	i32,
-	x86_power:		        i32,
-	loops_per_jiffy:	    u32, // check this
+    cpuid_level:            i32,            // int
+    x86_capability:         [u32;12],       // NCAPINTS+NBUGINTS
+    x86_vendor_id:          [wr_char;16],
+    x86_model_id:           [wr_char;64],
 
-	x86_max_cores:		    u16,
-	apicid:			        u16,
-	initial_apicid:		    u16,
-	x86_clflush_size:	    u16,
+    x86_cache_size:         i32,
+    x86_cache_alignment:    i32,
+    x86_power:              i32,
 
-	booted_cores:		    u16,
+    // is a long, so check for 64bit builds
+    loops_per_jiffy:        u32,
 
-	phys_proc_id:		    u16,
+    x86_max_cores:          u16,
+    apicid:                 u16,
+    initial_apicid:         u16,
+    x86_clflush_size:       u16,
 
-	cpu_core_id:		    u16,
+    booted_cores:           u16,
 
-	compute_unit_id:	    u8,
+    phys_proc_id:           u16,
 
-	cput_index:		        u16,
-	microcode:		        u32
+    cpu_core_id:            u16,
+
+    compute_unit_id:        u8,
+
+    cpu_index:              u16,
+    microcode:              u32
 }
 
+#[cfg(wr_cpu_detect_kbuild)]
 #[no_mangle]
 pub fn cpu_detect(c: &mut CpuInfoX86) {
 
-    c.rfu = 0xf;
 	unsafe{ 
 		il_cpuid(0x00000000, 
-		&mut (c.cpuid_level 	 as u32),
+		&mut (c.cpuid_level      as u32),
 		&mut (c.x86_vendor_id[0] as u32),
 		&mut (c.x86_vendor_id[8] as u32),
 		&mut (c.x86_vendor_id[4] as u32));
