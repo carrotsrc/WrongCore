@@ -2,17 +2,22 @@
 #![feature(no_std)]
 #![no_std]
 #![feature(lang_items)]
+#![feature(asm)]
+
 extern crate wrcore;
 
 use wrcore::types::wr_char;
 
 extern "C" {
 	fn il_cpuid(id: u32, a: &mut u32, b: &mut u32, c: &mut u32, d: &mut u32);
+    fn il_cpu_detect(info: *const CpuInfoX86);
 }
 
 // This stucture lines up with header for 32bit builds
 #[cfg(wr_cpu_detect_kbuild)]
 #[repr(C)]
+pub struct XCpuInfoX86;
+
 pub struct CpuInfoX86 {
 
     // originally these are __u8 which is an unsigned char
@@ -41,7 +46,7 @@ pub struct CpuInfoX86 {
     x86_coreid_bits:        u8,
     extended_cpuid_level:   u32,
 
-    cpuid_level:            i32,            // int
+    cpuid_level:            u32,            // int
     x86_capability:         [u32;12],       // NCAPINTS+NBUGINTS
     x86_vendor_id:          [wr_char;16],
     x86_model_id:           [wr_char;64],
@@ -72,16 +77,28 @@ pub struct CpuInfoX86 {
 
 #[cfg(wr_cpu_detect_kbuild)]
 #[no_mangle]
-pub fn cpu_detect(c: &mut CpuInfoX86) {
+pub extern "C" fn cpu_detect(c: &mut CpuInfoX86) {
+
+    // Working
+    // unsafe { il_cpu_detect(c); }
+
+
+    // Failing
+    let mut vid_0: u32 = 0;
+    let mut vid_8: u32 = 0;
+    let mut vid_4: u32 = 0;
 
     unsafe{ 
         il_cpuid(0x00000000, 
-        &mut (c.cpuid_level      as u32),
-        &mut (c.x86_vendor_id[0] as u32),
-        &mut (c.x86_vendor_id[8] as u32),
-        &mut (c.x86_vendor_id[4] as u32));
+        &mut c.cpuid_level,
+        &mut vid_0,
+        &mut vid_8,
+        &mut vid_4);
     }
 
+    c.x86_vendor_id[0] = vid_0 as u8;
+    c.x86_vendor_id[8] = vid_8 as u8;
+    c.x86_vendor_id[4] = vid_4 as u8;
     c.x86 = 4;
 
     if c.cpuid_level >= 0x00000001 {
@@ -90,7 +107,13 @@ pub fn cpu_detect(c: &mut CpuInfoX86) {
         let mut cap0: u32 = 0;
         let mut misc: u32 = 0;
 
-        unsafe{ il_cpuid(0x00000001, &mut tfms, &mut misc, &mut junk, &mut cap0); }
+        unsafe{ 
+            il_cpuid(0x00000001,
+            &mut tfms,
+            &mut misc,
+            &mut junk,
+            &mut cap0);
+        }
 
         c.x86 = ((tfms >> 8) & 0xf) as u8;
         c.x86_model = ((tfms >> 4) & 0xf) as u8;
@@ -108,8 +131,7 @@ pub fn cpu_detect(c: &mut CpuInfoX86) {
             c.x86_clflush_size = (((misc >> 8) & 0xff)<<3 as i32) as u16;
             c.x86_cache_alignment = c.x86_clflush_size as i32;
         }
-
     }
-
+    
 }
 
