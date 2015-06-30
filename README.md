@@ -14,7 +14,7 @@ Just, because.
 
 #### Log
 
-A log of what progress and changes can be found at the [http://carronautica.blogspot.com](Carronautica Blog)
+A log of what progress and changes can be found at the [Carronautica Blog](http://carronautica.blogspot.com)
 
 ### License
 
