@@ -60,5 +60,4 @@ pub fn wrcore_test_mutex() {
 		_ => b"WrongCore: Mutex Unlock\n\0"
 	};
 	wrcore::kernel::print(out);
-
 }
